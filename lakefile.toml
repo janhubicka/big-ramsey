@@ -1,0 +1,11 @@
+name = "C0Audit"
+version = "0.1.0"
+defaultTargets = ["C0Audit"]
+
+[[require]]
+name = "Formalization"
+git = "https://github.com/sneed-and-feed/lean-theorems-1.git"
+rev = "4fce2c92ad4321064a06afdc86d0272bc625ce14"
+
+[[lean_lib]]
+name = "C0Audit"
