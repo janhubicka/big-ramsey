@@ -9,3 +9,4 @@ rev = "4fce2c92ad4321064a06afdc86d0272bc625ce14"
 
 [[lean_lib]]
 name = "C0Audit"
+roots = ["C0Audit", "ConcreteFiniteGraph", "Submodularity", "CapacitatedHall", "RelativeOrientation"]
