@@ -1,0 +1,21 @@
+name: C0 Lean audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - c0-lean-audit-v4-20260909
+    paths:
+      - '**/*.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/c0-lean-audit.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+      - run: lake update
+      - run: lake build
