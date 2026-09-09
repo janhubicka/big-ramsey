@@ -54,8 +54,8 @@ theorem edgesOn_singleton (x : V) :
   constructor
   · intro he
     simp only [edgesOn, mem_filter, mem_singleton] at he
-    rcases he with ⟨hE, rfl, rfl⟩
-    exact (lt_irrefl x (G.ordered (x,x) hE)).elim
+    rcases he with ⟨hE, hu, hv⟩
+    exact (ne_of_lt (G.ordered (u,v) hE)) (hu.trans hv.symm)
   · simp
 
 theorem edgesOn_union_partition
@@ -161,6 +161,7 @@ theorem pairwiseDisjoint_cross_singletons
     (X : Set V).PairwiseDisjoint (fun x => G.crossEdges A {x}) := by
   classical
   intro x hx y hy hxy
+  change Disjoint (G.crossEdges A {x}) (G.crossEdges A {y})
   rw [Finset.disjoint_left]
   intro e hex hey
   rcases e with ⟨u,v⟩
@@ -194,14 +195,14 @@ theorem strong_total_capacity_bound
   have hAX : Disjoint A X := by
     rw [Finset.disjoint_left]
     intro a haA haX
-    have := hXB haX
-    exact this.2 haA
+    have hm := Finset.mem_sdiff.mp (hXB haX)
+    exact hm.2 haA
   have hAC : A ⊆ C := hStrong.1
   have hAuX_C : A ∪ X ⊆ C := by
     intro z hz
     rcases Finset.mem_union.mp hz with hzA | hzX
     · exact hAC hzA
-    · exact (hXB hzX).1
+    · exact (Finset.mem_sdiff.mp (hXB hzX)).1
   have hδ := hStrong.2 (A ∪ X) Finset.subset_union_left hAuX_C
   have hinc := G.predim_union_increment A X hAX
   omega
@@ -217,8 +218,7 @@ theorem downDegree_le_two
     subst y
     exact hx)
   rw [G.edgesOn_singleton x] at h
-  simp at h
-  omega
+  simpa [downDegree] using h
 
 
 theorem one_point_strong_of_downDegree_eq_two
@@ -233,7 +233,7 @@ theorem one_point_strong_of_downDegree_eq_two
     intro a haA hax
     simp only [mem_singleton] at hax
     subst a
-    exact hx.2 haA
+    exact (Finset.mem_sdiff.mp hx).2 haA
   have hpred :
       G.predim (insert x A) = G.predim A := by
     have hinc := G.predim_union_increment A {x} hAX
@@ -248,7 +248,7 @@ theorem one_point_strong_of_downDegree_eq_two
   refine ⟨?_, ?_⟩
   · intro y hy
     rcases mem_insert.mp hy with rfl | hyA
-    · exact hx.1
+    · exact (Finset.mem_sdiff.mp hx).1
     · exact hStrong.1 hyA
   · intro Y hAxY hYC
     have hAY : A ⊆ Y := by
@@ -267,7 +267,7 @@ theorem sum_capacity_plus_cross
   have hAX : Disjoint A X := by
     rw [Finset.disjoint_left]
     intro a haA haX
-    exact (hXB haX).2 haA
+    exact (Finset.mem_sdiff.mp (hXB haX)).2 haA
   have hsumdeg := G.cross_card_eq_sum_downDegree A X hAX
   have hpoint : ∀ x ∈ X, G.capacity A x + G.downDegree A x = 2 := by
     intro x hx
